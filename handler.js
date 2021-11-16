@@ -22,6 +22,8 @@ function handleOnClicked(info, tab) {
   }
 }
 
+chrome.contextMenus.removeAll();
+
 chrome.contextMenus.create({
   title: 'Open Jira for this key',
   contexts: ['selection'],
