@@ -7,7 +7,7 @@
     "notifications"
   ],
   "background": {
-    "service_worker": "handler.js"
+    "service_worker": "bg-wrapper.js"
   },
   "manifest_version": 3,
   "icons": {
