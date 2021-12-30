@@ -25,6 +25,10 @@ class Handler {
       title: 'Jira Key not found',
       message,
       silent: true,
+    }, function(notificationId) {
+      setTimeout(() => {
+        chrome.notifications.clear(notificationId);
+      }, 5000);
     });
   }
 
@@ -80,9 +84,7 @@ class Handler {
     });
   }
 
-  static main() {
-    chrome.contextMenus.removeAll();
-
+  static createContextMenus() {
     chrome.contextMenus.create({
       title: 'Open Jira',
       id: Handler.rootContextMenuId,
@@ -93,9 +95,8 @@ class Handler {
       const jiraObject = Handler.jiraObjects[jira];
       jiraObject.createContextMenu();
     }
-
-    chrome.contextMenus.onClicked.addListener(Handler.handleOnClicked);
   }
 }
 
-Handler.main();
+chrome.runtime.onInstalled.addListener(Handler.createContextMenus);
+chrome.contextMenus.onClicked.addListener(Handler.handleOnClicked);
