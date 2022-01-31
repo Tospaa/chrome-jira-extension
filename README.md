@@ -39,3 +39,7 @@ If you're on a Jira issue page and right click anywhere on the page, the key of 
 ## How to install?
 
 Clone the repo. Go to Chrome extensions page (chrome://extensions) and click "Load unpacked" button located at the top-left corner. Select the repo directory you've cloned earlier. The extension is ready to use.
+
+## Custom function
+
+You can use custom functions now! Read how you can use them [here](doc/add_custom_function.md).
