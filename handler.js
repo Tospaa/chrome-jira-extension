@@ -63,7 +63,7 @@ class Handler {
     }
   }
 
-  static handleOnClicked(info, tab) {
+  static async handleOnClicked(info, tab) {
     if (!info) {
       return;
     }
@@ -73,7 +73,7 @@ class Handler {
       return;
     }
 
-    const url = Handler.determineUrl(info, detectedKey);
+    const url = await Handler.determineUrl(info, detectedKey);
     if (!url) {
       return;
     }
@@ -84,7 +84,11 @@ class Handler {
     });
   }
 
-  static createContextMenus() {
+  static createContextMenus(details) {
+    if (details.reason === 'recreate-context-menus') {
+      chrome.contextMenus.removeAll();
+    }
+
     chrome.contextMenus.create({
       title: 'Open Jira',
       id: Handler.rootContextMenuId,
@@ -95,8 +99,21 @@ class Handler {
       const jiraObject = Handler.jiraObjects[jira];
       jiraObject.createContextMenu();
     }
+
+    if (details.reason === 'install') {
+      chrome.storage.local.set({ jiras: Object.keys(Handler.jiraObjects) });
+    }
+  }
+
+  static handleOnMessage(request, sender, sendResponse) {
+    if (request.action === 'recreate-context-menus') {
+      Handler.createContextMenus({ reason: 'recreate-context-menus' });
+    }
+
+    sendResponse({ action: 'done' });
   }
 }
 
 chrome.runtime.onInstalled.addListener(Handler.createContextMenus);
 chrome.contextMenus.onClicked.addListener(Handler.handleOnClicked);
+chrome.runtime.onMessage.addListener(Handler.handleOnMessage);

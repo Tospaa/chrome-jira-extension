@@ -39,6 +39,30 @@ class TrilogyJira {
       parentId: TrilogyJira.contextMenuId,
       ...Handler.defaultContextMenuProps,
     });
+
+    TrilogyJira.createContextMenuForCustomFunctions();
+  }
+
+  static async getCustomFunctions() {
+    const syncStorage = await chrome.storage.sync.get('customFunctions');
+    if (syncStorage.customFunctions && TrilogyJira.contextMenuId in syncStorage.customFunctions) {
+      return syncStorage.customFunctions[TrilogyJira.contextMenuId];
+    }
+
+    return {};
+  }
+
+  static async createContextMenuForCustomFunctions() {
+    const customFunctions = await TrilogyJira.getCustomFunctions();
+    for (let funcName in customFunctions) {
+      const id = `${TrilogyJira.contextMenuId}-${funcName}`;
+      chrome.contextMenus.create({
+        title: funcName,
+        id,
+        parentId: TrilogyJira.contextMenuId,
+        ...Handler.defaultContextMenuProps,
+      });
+    }
   }
 
   static determineUrl(menuItemId, detectedKey) {
@@ -46,6 +70,29 @@ class TrilogyJira {
       const func = TrilogyJira.functionMap[menuItemId];
       return func(detectedKey);
     }
+
+    return TrilogyJira.customFunction(menuItemId, detectedKey);
+  }
+
+  static async customFunction(menuItemId, detectedKey) {
+    const customFunctions = await TrilogyJira.getCustomFunctions();
+    let func = undefined;
+    for (let funcName in customFunctions) {
+      const id = `${TrilogyJira.contextMenuId}-${funcName}`;
+      if (id === menuItemId) {
+        func = customFunctions[funcName];
+        break;
+      }
+    }
+
+    if (!func) {
+      throw new Error(`No custom function found for menu item id ${menuItemId}`);
+    }
+
+    const finalJql = func.jql
+      .replace('{key}', detectedKey)
+      .replace('{project}', detectedKey.split('-')[0]);
+    return `${TrilogyJira.url}/issues/?jql=${encodeURI(finalJql)}`;
   }
 
   static openSelected(detectedKey) {
