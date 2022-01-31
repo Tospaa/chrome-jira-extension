@@ -91,7 +91,7 @@ class DevgraphAlpJira {
   }
 
   static findRelatedENGG(detectedKey) {
-    const jql = `"Work Data Structure Link[URL Field]" = "${DevgraphAlpJira.url}/browse/${detectedKey}"`;
+    const jql = `"Work Data Structure Link[URL Field]" = "${TrilogyJira.url}/browse/${detectedKey}"`;
     return `${DevgraphAlpJira.url}/issues/?jql=${encodeURI(jql)}`;
   }
 }
