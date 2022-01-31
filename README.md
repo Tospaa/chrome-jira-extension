@@ -29,7 +29,7 @@ If you're on a Jira issue page and right click anywhere on the page, the key of 
 
 - You can open the Trilogy Engineering Jira issue page of the selected key.
 - You can find the Trilogy Engineering Jira issue of the given Central (Legacy) Jira key.
-- You can list the Trilogy Engineering Jira Functional Area tickets of the prokject of the selected key.
+- You can list the Trilogy Engineering Jira Functional Area tickets of the project of the selected key.
 
 ### Devgraph ALP Jira
 
