@@ -55,9 +55,8 @@ class BaseJira {
       throw new Error(`No custom function found for menu item id ${menuItemId}`);
     }
 
-    const finalJql = func.jql
-      .replace('{key}', detectedKey)
-      .replace('{project}', detectedKey.split('-')[0]);
-    return `${this.url}/issues/?jql=${encodeURI(finalJql)}`;
+    const builder = new CustomFunctionJqlBuilder(func, this, detectedKey);
+    const finalJql = await builder.build();
+    return `${this.url}/issues/?jql=${finalJql}`;
   }
 }

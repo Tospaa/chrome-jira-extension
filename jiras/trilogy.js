@@ -53,7 +53,7 @@ class TrilogyJira extends BaseJira {
   }
 
   static listFunctionalAreas(detectedKey) {
-    const projectKey = detectedKey.split('-')[0];
+    const projectKey = JiraKeyUtil.getProjectKeyFromIssueKey(detectedKey);
     const jql = `project = ${projectKey} and type = "Functional Area"`;
     return `${this.url}/issues/?jql=${encodeURI(jql)}`;
   }

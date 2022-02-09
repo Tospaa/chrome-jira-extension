@@ -8,6 +8,9 @@
     "notifications",
     "storage"
   ],
+  "host_permissions": [
+    "https://*.atlassian.net/*"
+  ],
   "background": {
     "service_worker": "bg-wrapper.js"
   },

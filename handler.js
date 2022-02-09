@@ -18,11 +18,11 @@ class Handler {
     [DevgraphAlpJira.contextMenuId]: DevgraphAlpJira,
   };
 
-  static notifyUser(message) {
+  static notifyUser(title, message) {
     chrome.notifications.create({
       type: 'basic',
       iconUrl: 'icons/128.png',
-      title: 'Jira Key not found',
+      title,
       message,
       silent: true,
     }, function(notificationId) {
@@ -37,21 +37,27 @@ class Handler {
       if (Handler.jiraKeyMatcher.test(info.selectionText)) {
         return info.selectionText;
       } else {
-        Handler.notifyUser(`The selected text does not look like a Jira key: ${info.selectionText}`);
+        Handler.notifyUser(
+          'Jira Key not found',
+          `The selected text does not look like a Jira key: ${info.selectionText}`);
       }
     } else if (info.linkUrl) {
       const matches = info.linkUrl.match(Handler.jiraKeyMatcherInUrl);
       if (matches && matches.length > 0) {
         return matches[0];
       } else {
-        Handler.notifyUser(`This link does not contain a Jira key: ${info.linkUrl}`);
+        Handler.notifyUser(
+          'Jira Key not found',
+          `This link does not contain a Jira key: ${info.linkUrl}`);
       }
     } else if (info.pageUrl) {
       const matches = info.pageUrl.match(Handler.jiraKeyMatcherInUrl);
       if (matches && matches.length > 0) {
         return matches[0];
       } else {
-        Handler.notifyUser(`The URL of the current tab does not contain a Jira key: ${info.pageUrl}`);
+        Handler.notifyUser(
+          'Jira Key not found'
+          `The URL of the current tab does not contain a Jira key: ${info.pageUrl}`);
       }
     }
   }
@@ -68,20 +74,27 @@ class Handler {
       return;
     }
 
-    const detectedKey = Handler.detectKey(info);
-    if (!detectedKey) {
-      return;
-    }
+    try {
+      const detectedKey = Handler.detectKey(info);
+      if (!detectedKey) {
+        return;
+      }
 
-    const url = await Handler.determineUrl(info, detectedKey);
-    if (!url) {
-      return;
-    }
+      const url = await Handler.determineUrl(info, detectedKey);
+      if (!url) {
+        return;
+      }
 
-    chrome.tabs.create({
-      url,
-      index: tab.index + 1,
-    });
+      chrome.tabs.create({
+        url,
+        index: tab.index + 1,
+      });
+    } catch (e) {
+      console.error(e);
+      Handler.notifyUser(
+        'Error',
+        e.message);
+    }
   }
 
   static createContextMenus(details) {
