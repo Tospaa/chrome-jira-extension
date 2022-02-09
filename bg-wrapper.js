@@ -1,5 +1,6 @@
 try {
   importScripts(
+    '/jiras/base.js',
     '/jiras/central.js',
     '/jiras/trilogy.js',
     '/jiras/devgraphalp.js',
