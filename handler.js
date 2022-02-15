@@ -56,7 +56,7 @@ class Handler {
         return matches[0];
       } else {
         Handler.notifyUser(
-          'Jira Key not found'
+          'Jira Key not found',
           `The URL of the current tab does not contain a Jira key: ${info.pageUrl}`);
       }
     }
